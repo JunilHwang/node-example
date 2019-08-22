@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Single Page Application</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const one = (ele, parent = document) => parent.querySelector(ele)
+    const all = (ele, parent = document) => parent.querySelectorAll(ele)
+    const app = () => {
+      const listData = []
+      const render = () => {
+        one('#app').innerHTML = `
+          <form name="insert">
+            <fieldset><legend>추가</legend>
+              <input type="text" name="content" size="40" autofocus />
+              <button type="submit">전송</button>
+            </fieldset>
+          </form>
+          <form name="update">
+            <fieldset><legend>수정</legend>
+              <input type="text" name="idx" size="10" />
+              <input type="text" name="content" size="40" />
+              <button type="submit">전송</button>
+            </fieldset>
+          </form>
+          <form name="delete">
+            <fieldset><legend>삭제</legend>
+              <input type="text" name="idx" size="10" />
+              <button type="submit">전송</button>
+            </fieldset>
+          </form>
+          ${listData.map((v, k) => `<p>${k} / ${v}</p>`).join('')}
+        `
+      }
+      render()
+    }
+    app()
+  </script>
+</body>
+</html>
