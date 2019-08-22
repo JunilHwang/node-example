@@ -10,32 +10,67 @@
     const one = (ele, parent = document) => parent.querySelector(ele)
     const all = (ele, parent = document) => parent.querySelectorAll(ele)
     const app = () => {
-      const listData = []
-      const render = () => {
+      const render = data => {
         one('#app').innerHTML = `
-          <form name="insert">
+          <form name="insertFrm">
             <fieldset><legend>추가</legend>
               <input type="text" name="content" size="40" autofocus />
               <button type="submit">전송</button>
             </fieldset>
           </form>
-          <form name="update">
+          <form name="updateFrm">
             <fieldset><legend>수정</legend>
               <input type="text" name="idx" size="10" />
               <input type="text" name="content" size="40" />
               <button type="submit">전송</button>
             </fieldset>
           </form>
-          <form name="delete">
+          <form name="deleteFrm">
             <fieldset><legend>삭제</legend>
               <input type="text" name="idx" size="10" />
               <button type="submit">전송</button>
             </fieldset>
           </form>
-          ${listData.map((v, k) => `<p>${k} / ${v}</p>`).join('')}
+          ${data.map((v, k) => `<p>${k} / ${v}</p>`).join('')}
         `
+
+        setEvent()
       }
-      render()
+      const headers = { 'content-type': 'application/json'  }
+      const getList = () => fetch('/list').then(res => res.json())
+      const postList = data => fetch('/list', { method: 'post', headers, body: JSON.stringify(data) }).then(res => res.json())
+      const putList = (idx, data) => fetch('/list/' + idx, { method: 'put', headers, body: JSON.stringify(data) }).then(res => res.json())
+      const deleteList = idx => fetch('/list/' + idx, { method: 'delete' }).then(res => res.json())
+
+      const setEvent = () => {
+        const { insertFrm, updateFrm, deleteFrm } = document.forms
+        const reRender = _ => {
+          getList().then(({ success, data }) => { success && render(data) })
+        }
+        insertFrm.onsubmit = e => {
+          e.preventDefault()
+          const content = e.target.content.value
+          postList({ content })
+          .then(({ success }) => { success && reRender() })
+        }
+        updateFrm.onsubmit = e => {
+          e.preventDefault()
+          const content = e.target.content.value
+          const idx = e.target.idx.value
+          putList(idx, { content })
+          .then(({ success }) => { success && reRender() })
+        }
+        deleteFrm.onsubmit = e => {
+          e.preventDefault()
+          deleteList(e.target.idx.value)
+          .then(({ success }) => { success && reRender() })
+        }
+      }
+
+      getList().then(({ success, data }) => {
+        if (success) render(data)
+      })
+
     }
     app()
   </script>
