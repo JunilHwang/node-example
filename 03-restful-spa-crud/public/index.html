@@ -37,39 +37,33 @@
         setEvent()
       }
       const headers = { 'content-type': 'application/json'  }
-      const getList = () => fetch('/list').then(res => res.json())
-      const postList = data => fetch('/list', { method: 'post', headers, body: JSON.stringify(data) }).then(res => res.json())
-      const putList = (idx, data) => fetch('/list/' + idx, { method: 'put', headers, body: JSON.stringify(data) }).then(res => res.json())
-      const deleteList = idx => fetch('/list/' + idx, { method: 'delete' }).then(res => res.json())
+      const req = (url = '', type = 'get', data) => fetch(`/list/${url}`, { method: type, headers, body: data }).then(res => res.json())
+      const getList = () => req()
+      const postList = data => req('', 'post', JSON.stringify(data))
+      const putList = (idx, data) => req(idx, 'put', JSON.stringify(data))
+      const deleteList = idx => req(idx, 'delete')
+      const dataToRender = _ => getList().then(({ success, data }) => { success && render(data) })
 
       const setEvent = () => {
         const { insertFrm, updateFrm, deleteFrm } = document.forms
-        const reRender = _ => {
-          getList().then(({ success, data }) => { success && render(data) })
-        }
         insertFrm.onsubmit = e => {
           e.preventDefault()
           const content = e.target.content.value
-          postList({ content })
-          .then(({ success }) => { success && reRender() })
+          postList({ content }).then(({ success }) => { success && dataToRender() })
         }
         updateFrm.onsubmit = e => {
           e.preventDefault()
           const content = e.target.content.value
           const idx = e.target.idx.value
-          putList(idx, { content })
-          .then(({ success }) => { success && reRender() })
+          putList(idx, { content }).then(({ success }) => { success && dataToRender() })
         }
         deleteFrm.onsubmit = e => {
           e.preventDefault()
-          deleteList(e.target.idx.value)
-          .then(({ success }) => { success && reRender() })
+          deleteList(e.target.idx.value).then(({ success }) => { success && dataToRender() })
         }
       }
 
-      getList().then(({ success, data }) => {
-        if (success) render(data)
-      })
+      dataToRender()
 
     }
     app()
