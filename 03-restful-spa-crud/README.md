@@ -5,3 +5,12 @@
 ## 필요 패키지
 - express : 웹 프레임워크.
 - nodemon : 파일 저장시 자동으로 node server를 restart 해주는 역할
+
+## 실행 방법
+- 패키지 설치
+
+> npm install
+
+- 서버 실행
+
+> npm start
