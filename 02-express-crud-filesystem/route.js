@@ -19,15 +19,9 @@ router.post('/action', async (req, res) => {
   const { action, content, idx } = req.body
   const listData = await getData()
   switch (action) {
-    case 'insert' :
-      listData.push(content)
-    break;
-    case 'update' :
-      listData[idx] = content
-    break;
-    case 'delete' :
-      listData.splice(idx, 1)
-    break;
+    case 'insert' : listData.push(content); break;
+    case 'update' : listData[idx] = content; break;
+    case 'delete' : listData.splice(idx, 1); break;
   }
 
   await setData(listData)
