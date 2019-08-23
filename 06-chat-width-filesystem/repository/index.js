@@ -1,11 +1,12 @@
 const fs = require('fs')
 const getData = _ => new Promise(resolve => {
   fs.readFile(__dirname + '/data.json', 'utf-8', (err, data) => {
-    resolve(JSON.parse(data))
+    console.log(data)
+    resolve(JSON.parse(data || '[]'))
   })
 })
 const setData = data => new Promise(resolve => {
-  fs.writeFile(__dirname + '/data.json', JSON.stringify(data), 'utf-8', er => {
+  fs.writeFile(__dirname + '/data.json', JSON.stringify(data), 'utf-8', err => {
     resolve()
   })
 })
