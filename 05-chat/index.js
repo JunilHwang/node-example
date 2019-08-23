@@ -3,8 +3,14 @@ const app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 
+const list = []
+
 io.on('connection', socket => {
+  socket.on('load', _ => {
+    io.emit('msgLoad', list)
+  })
   socket.on('msg', v => {
+    list.push(v)
     io.emit('msgAdd', v)
   })
 })
