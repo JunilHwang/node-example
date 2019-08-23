@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatting With Socket.io</title>
+  <style>
+    *{margin:0;padding:0;}
+    ul,li{list-style:none;}
+    #listTag { overflow: auto; height:400px;}
+    #listTag > li:nth-child(2n){background:#ddd;}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <ul id="listTag"></ul>
+    <p>
+      <input type="text" id="inputTag" size="80" autofocus>
+    </p>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io()
+    const inputTag = document.getElementById('inputTag')
+    const listTag  = document.getElementById('listTag')
+    const msgAdd = msg => {
+      const li = document.createElement('li')
+      li.innerHTML = msg
+      listTag.appendChild(li)
+      listTag.scrollTo(0, listTag.scrollTop + listTag.scrollHeight)
+    }
+    inputTag.onkeydown = e => {
+      if (e.keyCode === 13) {
+        if (e.target.value.length === 0) return false
+        socket.emit('msg', e.target.value)
+        e.target.value = ''
+      }
+    }
+
+    socket.on('msgAdd', msgAdd)
+    socket.on('msgLoad', list => list.forEach(v => msgAdd(v)))
+    socket.emit('load')
+  </script>
+</body>
+</html>
